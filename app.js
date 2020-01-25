@@ -3,7 +3,7 @@ const express = require('express');
 const app = express();
 const PORT = 3000;
 
-app.get('/', (req, res) => {
+app.get('/api', (req, res) => {
   res.send('Overwatch career app')
 });
 
