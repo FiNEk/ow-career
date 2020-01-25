@@ -1,4 +1,19 @@
 {
+  "name": "overwatch-favorites",
+  "version": "0.1.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/finek/wnm_overwatchprofile.git"
+  },
+  "author": "Denis Anashkin",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://gitlab.com/finek/wnm_overwatchprofile/issues"
+  },
+  "homepage": "https://gitlab.com/finek/wnm_overwatchprofile#readme",
   "dependencies": {
     "express": "^4.17.1"
   }
