@@ -1,1 +1,5 @@
 node_modules
+build
+config/local.json
+*.log
+public
