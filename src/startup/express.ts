@@ -3,6 +3,7 @@ import passport from "passport";
 import helmet from "helmet";
 import initPassport from "./passport";
 import users from "../routes/users";
+import career from "../routes/career";
 
 export default function(app: Application) {
   app.use(json());
@@ -10,6 +11,7 @@ export default function(app: Application) {
   app.use(serveStatic("./public"));
   initPassport(passport);
   app.use(passport.initialize());
-  // routes
+  // routers
   app.use("/api/users", users);
+  app.use("/api/career", career);
 }

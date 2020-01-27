@@ -5,7 +5,7 @@ import { pool } from "../db";
 export default function() {
   nodeCleanup((exitCode, signal) => {
     if (signal) {
-      winston.info("started cleanup");
+      winston.info("disposing postgres pool...");
       pool.end(() => {
         winston.info("cleanup ended, terminating process");
         process.kill(process.pid, signal);

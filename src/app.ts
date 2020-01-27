@@ -1,8 +1,8 @@
 import express from "express";
 import winston from "winston";
+import initConfig from "./startup/config";
 import initLogger from "./startup/logging";
 import initCleanup from "./startup/cleanup-onexit";
-import initConfig from "./startup/config";
 import initExpress from "./startup/express";
 
 initLogger();

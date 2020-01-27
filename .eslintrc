@@ -2,6 +2,7 @@
   "extends": "airbnb-typescript-prettier",
   "rules": {
     "consistent-return": "off",
-    "@typescript-eslint/ban-ts-ignore": "off"
+    "@typescript-eslint/ban-ts-ignore": "off",
+    "no-restricted-syntax": "off"
   }
 }

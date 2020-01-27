@@ -11,8 +11,9 @@
     "esModuleInterop": true,
     "sourceMap": true,
     // "resolveJsonModule": true,
-    "strict": true
+    // "strict": true,
+    "typeRoots": ["typings"]
   },
   "exclude": ["node_modules"],
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*.ts", "typings/*"]
 }

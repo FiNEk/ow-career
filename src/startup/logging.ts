@@ -12,13 +12,15 @@ export default function() {
     new winston.transports.File({
       filename: "errors.log",
       handleExceptions: true,
-      level: "error"
+      level: "error",
+      format: winston.format.simple()
     })
   );
 
   winston.add(
     new winston.transports.File({
-      filename: "combined.log"
+      filename: "combined.log",
+      format: winston.format.simple()
     })
   );
 

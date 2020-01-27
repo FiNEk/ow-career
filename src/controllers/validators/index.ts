@@ -6,13 +6,7 @@ type UserRegRequest = {
   email: string;
   password: string;
 };
-
-type UserLoginRequest = {
-  email: string;
-  password: string;
-};
-
-export function validateUser(user: UserRegRequest) {
+export function validateUser(body: UserRegRequest) {
   const schema = Joi.object({
     firstName: Joi.string()
       .alphanum()
@@ -38,10 +32,14 @@ export function validateUser(user: UserRegRequest) {
       .max(30)
       .trim()
   });
-  return schema.validate(user, { abortEarly: false });
+  return schema.validate(body, { abortEarly: false });
 }
 
-export function validateLogin(user: UserLoginRequest) {
+type UserLoginRequest = {
+  email: string;
+  password: string;
+};
+export function validateLogin(body: UserLoginRequest) {
   const schema = Joi.object({
     email: Joi.string()
       .required()
@@ -55,5 +53,20 @@ export function validateLogin(user: UserLoginRequest) {
       .max(30)
       .trim()
   });
-  return schema.validate(user);
+  return schema.validate(body);
+}
+
+type CareerSearchRequest = {
+  btag: string;
+};
+
+export function validateCareerSearch(body: CareerSearchRequest) {
+  const schema = Joi.object({
+    btag: Joi.string()
+      .required()
+      .min(1)
+      .max(255)
+      .trim()
+  });
+  return schema.validate(body);
 }

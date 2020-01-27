@@ -28,7 +28,10 @@ export const registerUser = async (req: Request, res: Response) => {
       validationErr.details.forEach(el => errors.push(el.message));
     if (errors[0]) {
       if (req.file) await fs.unlink(req.file.path);
-      return res.status(400).send(errors);
+      return res.status(400).send({
+        status: "ERROR",
+        message: errors
+      });
     }
     const user = _.pick(value, ["firstName", "lastName", "email", "password"]);
     const newFileName = `${user.firstName}-${
@@ -41,9 +44,11 @@ export const registerUser = async (req: Request, res: Response) => {
     const salt = await bcrypt.genSalt();
     user.password = await bcrypt.hash(value.password, salt);
     const { rows: queryResult } = await db.query(
-      `INSERT INTO account (first_name, last_name, email, password, avatar_filename) 
-       VALUES ($1, $2, $3, $4, $5)
-       RETURNING *`,
+      `INSERT INTO account 
+      (first_name, last_name, email, password, avatar_filename) 
+      VALUES 
+      ($1, $2, $3, $4, $5)
+      RETURNING *`,
       [
         user.firstName,
         user.lastName,
@@ -73,20 +78,28 @@ export const registerUser = async (req: Request, res: Response) => {
 export const loginUser = async (req: Request, res: Response) => {
   try {
     const { error, value } = validateLogin(req.body);
-    if (error) return res.status(400).send(error.message);
-    const {
-      rows
-    } = await db.query(
-      "SELECT user_id, password FROM account WHERE email = $1",
-      [value.email]
-    );
-    if (!rows[0]) return res.status(400).send("Invalid email or password");
+    if (error)
+      return res.status(400).send({
+        status: "ERROR",
+        message: error.message
+      });
+    const { rows } = await db.query("SELECT * FROM account WHERE email = $1", [
+      value.email
+    ]);
+    if (!rows[0])
+      return res.status(400).send({
+        status: "ERROR",
+        message: "Invalid email or password"
+      });
     const isValidPassword = await bcrypt.compare(
       value.password,
       rows[0].password
     );
     if (!isValidPassword)
-      return res.status(400).send("Invalid email or password");
+      return res.status(400).send({
+        status: "ERROR",
+        message: "Invalid email or password"
+      });
     const userToken = generateAuthToken({
       id: rows[0].user_id,
       password: rows[0].password
@@ -94,7 +107,35 @@ export const loginUser = async (req: Request, res: Response) => {
     res.setHeader("Authorization", `Bearer ${userToken}`);
     res.send({
       message: "OK",
+      user: _.pick(rows[0], [
+        "email",
+        "first_name",
+        "last_name",
+        "avatar_filename"
+      ]),
       token: userToken
+    });
+  } catch (error) {
+    winston.error(error.message, [error]);
+    res.sendStatus(500);
+  }
+};
+
+export const getUser = async (req: Request, res: Response) => {
+  try {
+    const { rows } = await db.query(
+      "SELECT * FROM account WHERE user_id = $1",
+      [req.user.toString()]
+    );
+    if (!rows[0]) return res.sendStatus(500);
+    res.send({
+      message: "OK",
+      user: _.pick(rows[0], [
+        "email",
+        "first_name",
+        "last_name",
+        "avatar_filename"
+      ])
     });
   } catch (error) {
     winston.error(error.message, [error]);

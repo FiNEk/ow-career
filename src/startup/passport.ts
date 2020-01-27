@@ -1,4 +1,3 @@
-// import passport from "passport";
 import { PassportStatic } from "passport";
 import { Strategy, StrategyOptions, ExtractJwt } from "passport-jwt";
 import config from "config";
@@ -7,9 +6,7 @@ import { UserToken } from "../controllers/users";
 
 const options: StrategyOptions = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: config.get("jwtPrivateKey"),
-  issuer: "wnm.digital",
-  audience: "test-denis.wnm.digital"
+  secretOrKey: config.get("jwtPrivateKey")
 };
 
 const authStrategy = new Strategy(options, async (payload: UserToken, done) => {
@@ -24,8 +21,7 @@ const authStrategy = new Strategy(options, async (payload: UserToken, done) => {
     const isValidPassword = payload.password === rows[0].password;
     if (!isValidPassword)
       return done(null, false, { message: "Invalid token" });
-    const user = rows[0].user_id;
-    return done(null, user);
+    return done(null, rows[0].user_id);
   } catch (error) {
     return done(error);
   }
