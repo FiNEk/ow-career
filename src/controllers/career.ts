@@ -4,71 +4,8 @@ import superagent from "superagent";
 import { load } from "cheerio";
 import _ from "lodash";
 import { validateCareerSearch } from "./validators";
-import { RATING_SELECTORS } from "./utils";
+import { extractPlayerData } from "./utils";
 import db from "../db";
-
-type PlayerData = {
-  tank: null | string;
-  dps: null | string;
-  heal: null | string;
-  name: string;
-  avatarUrl: string;
-};
-
-function extractPlayerData($: CheerioStatic, bTag: string): PlayerData {
-  const {
-    RATING_ROLE_CONTAINER,
-    FIRST_RATING_ROLE,
-    SECOND_RATING_ROLE,
-    THIRD_RATING_ROLE,
-    PLAYER_AVATAR
-  } = RATING_SELECTORS;
-  // const roleExtractor = /\((.*?)\)/;
-  const result = {
-    tank: null,
-    dps: null,
-    heal: null,
-    name: bTag,
-    avatarUrl: $(PLAYER_AVATAR).attr("src")
-  };
-  const availableRoles = $(RATING_ROLE_CONTAINER).children().length;
-  const tooltips: string[] = [];
-  const ratings: string[] = [];
-  if (availableRoles >= 1) {
-    tooltips.push($(FIRST_RATING_ROLE).attr("data-ow-tooltip-text"));
-    ratings.push(
-      $(FIRST_RATING_ROLE)
-        .next()
-        .text()
-    );
-  }
-  if (availableRoles >= 2) {
-    tooltips.push($(SECOND_RATING_ROLE).attr("data-ow-tooltip-text"));
-    ratings.push(
-      $(SECOND_RATING_ROLE)
-        .next()
-        .text()
-    );
-  }
-  if (availableRoles === 3) {
-    tooltips.push($(THIRD_RATING_ROLE).attr("data-ow-tooltip-text"));
-    ratings.push(
-      $(THIRD_RATING_ROLE)
-        .next()
-        .text()
-    );
-  }
-  tooltips.forEach((el, idx) => {
-    if (el.includes("танк")) {
-      result.tank = ratings[idx];
-    } else if (el.includes("урон")) {
-      result.dps = ratings[idx];
-    } else if (el.includes("поддержка")) {
-      result.heal = ratings[idx];
-    }
-  });
-  return result;
-}
 
 type ProfileToUpdate = {
   id: string;
@@ -91,14 +28,16 @@ async function updateProfiles(profiles: ProfileToUpdate[]) {
           ow_avatar = $1,
           rating_tank = $2,
           rating_dps = $3,
-          rating_heal = $4
+          rating_heal = $4,
+          updated_at = to_timestamp($5)
         WHERE
-          career_id = $5`,
+          career_id = $6`,
           [
             playerProfile.avatarUrl,
             playerProfile.tank,
             playerProfile.dps,
             playerProfile.heal,
+            (Date.now() / 1000).toString(),
             profile.id
           ]
         );

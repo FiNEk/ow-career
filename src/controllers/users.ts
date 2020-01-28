@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import { promises as fs } from "fs";
-import path from "path";
 import _ from "lodash";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -8,6 +7,7 @@ import winston from "winston";
 import config from "config";
 import db from "../db";
 import { validateLogin, validateUser } from "./validators";
+import { renameAvatar } from "./utils";
 
 export type UserToken = {
   id: number;
@@ -34,11 +34,11 @@ export const registerUser = async (req: Request, res: Response) => {
       });
     }
     const user = _.pick(value, ["firstName", "lastName", "email", "password"]);
-    const newFileName = `${user.firstName}-${
-      user.lastName
-    }-${Date.now().toString()}${path.extname(req.file.filename)}`;
-    const newFilePath = path.join(req.file.destination, newFileName);
-    await fs.rename(req.file.path, newFilePath);
+    const { newFileName, newFilePath } = await renameAvatar(
+      user.firstName,
+      user.lastName,
+      req.file
+    );
     req.file.path = newFilePath;
     req.file.filename = newFileName;
     const salt = await bcrypt.genSalt();
