@@ -9,13 +9,13 @@ type UserRegRequest = {
 export function validateUser(body: UserRegRequest) {
   const schema = Joi.object({
     firstName: Joi.string()
-      .alphanum()
+      .pattern(/[a-zA-Zа-яА-Я0-9]+/, "alpha numeric")
       .required()
       .min(2)
       .max(50)
       .trim(),
     lastName: Joi.string()
-      .alphanum()
+      .pattern(/[a-zA-Zа-яА-Я0-9]+/, "alpha numeric")
       .required()
       .min(2)
       .max(50)
