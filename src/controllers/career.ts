@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 import { Request, Response } from "express";
 import winston from "winston";
 import superagent from "superagent";
@@ -15,13 +16,18 @@ async function updateProfiles(profiles: ProfileToUpdate[]) {
   try {
     if (profiles.length >= 1) {
       winston.info("Updating old profiles");
-      for await (const profile of profiles) {
-        const careerPage = await superagent.get(
+      const pageRequests = profiles.map(profile =>
+        superagent.get(
           `https://playoverwatch.com/ru-ru/career/pc/${profile.btag}`
-        );
-        const $ = load(careerPage.text);
-        const playerProfile = extractPlayerData($, profile.btag);
-        await db.query(
+        )
+      );
+      const careerPages = await Promise.all(pageRequests);
+      const playerData = careerPages.map((career, idx) => {
+        const $ = load(career.text);
+        return extractPlayerData($, profiles[idx].btag);
+      });
+      const dbQueries = playerData.map((player, idx) => {
+        return db.query(
           `UPDATE 
           career_profile
         SET 
@@ -33,16 +39,17 @@ async function updateProfiles(profiles: ProfileToUpdate[]) {
         WHERE
           career_id = $6`,
           [
-            playerProfile.avatarUrl,
-            playerProfile.tank,
-            playerProfile.dps,
-            playerProfile.heal,
+            player.avatarUrl,
+            player.tank,
+            player.dps,
+            player.heal,
             (Date.now() / 1000).toString(),
-            profile.id
+            profiles[idx].id
           ]
         );
-        winston.info("profile updated");
-      }
+      });
+      await Promise.all(dbQueries);
+      winston.info("Old profiles updated");
     }
   } catch (error) {
     winston.error(error.message, [error]);
