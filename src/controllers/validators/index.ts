@@ -61,6 +61,13 @@ type CareerSearchRequest = {
 };
 
 export function validateCareerSearch(body: CareerSearchRequest) {
+  const career = body;
+  const hashTagPosition = career.btag.indexOf("#");
+  if (hashTagPosition !== -1) {
+    career.btag = `${career.btag.slice(0, hashTagPosition)}-${career.btag.slice(
+      hashTagPosition + 1
+    )}`;
+  }
   const schema = Joi.object({
     btag: Joi.string()
       .required()
@@ -68,5 +75,5 @@ export function validateCareerSearch(body: CareerSearchRequest) {
       .max(255)
       .trim()
   });
-  return schema.validate(body);
+  return schema.validate(career);
 }
