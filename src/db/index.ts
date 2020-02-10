@@ -5,8 +5,8 @@ import config from "config";
 export const pool = new Pool({
   user: "postgres",
   host: "127.0.0.1",
-  database: "wnm_owfavorites",
-  password: config.get("keys.postgres")
+  database: "owfavorites",
+  password: config.get("postgresPswd")
 });
 
 export default {
