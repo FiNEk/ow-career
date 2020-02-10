@@ -1,4 +1,5 @@
 {
   "defaultPort": 3000,
-  "jwtPrivateKey": ""
+  "jwtPrivateKey": "",
+  "postgresPswd": ""
 }

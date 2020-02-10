@@ -1,3 +1,4 @@
 {
-  "jwtPrivateKey": "wnm_jwtPrivateKey"
+  "jwtPrivateKey": "owcareer_jwtPrivateKey",
+  "postgresPswd": "owcareer_pgPassword"
 }
