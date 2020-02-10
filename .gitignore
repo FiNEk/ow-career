@@ -3,3 +3,4 @@ build
 config/local.json
 *.log
 public
+TODO.md
