@@ -1,5 +1,6 @@
 import path from "path";
 import { promises as fs } from "fs";
+import CyrillicToTranslit from "cyrillic-to-translit-js";
 
 export const RATING_SELECTORS = {
   RATING_ROLE_CONTAINER:
@@ -84,7 +85,15 @@ export async function renameAvatar(
   lastName: string,
   file: Express.Multer.File
 ) {
-  const newFileName = `${firstName}-${lastName}-${Date.now().toString()}${path.extname(
+  const ruRegex = /[А-Яа-я]/;
+  let first = firstName;
+  let last = lastName;
+  if (ruRegex.test(firstName) || ruRegex.test(lastName)) {
+    const toTranslit = new CyrillicToTranslit({ preset: "ru" });
+    first = toTranslit.transform(firstName);
+    last = toTranslit.transform(lastName);
+  }
+  const newFileName = `${first}-${last}-${Date.now().toString()}${path.extname(
     file.filename
   )}`;
   const newFilePath = path.join(file.destination, newFileName);
