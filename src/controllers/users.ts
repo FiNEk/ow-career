@@ -64,6 +64,12 @@ export const registerUser = async (req: Request, res: Response) => {
     res.setHeader("Authorization", `Bearer ${userToken}`);
     res.send({
       message: "OK",
+      user: _.pick(queryResult[0], [
+        "first_name",
+        "last_name",
+        "email",
+        "avatar_filename"
+      ]),
       token: userToken
     });
   } catch (error) {
