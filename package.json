@@ -8,13 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://gitlab.com/finek/wnm_overwatchprofile.git"
+    "url": "git+https://github.com/FiNEk/ow-career"
   },
   "author": "Denis Anashkin",
+  "license": "GNU GPLv3",
   "bugs": {
-    "url": "https://gitlab.com/finek/wnm_overwatchprofile/issues"
+    "url": "https://github.com/FiNEk/ow-career/issues"
   },
-  "homepage": "https://gitlab.com/finek/wnm_overwatchprofile#readme",
+  "homepage": "https://github.com/FiNEk/ow-career",
   "dependencies": {
     "@hapi/joi": "^17.1.0",
     "@types/bcrypt": "^3.0.0",
@@ -36,6 +37,7 @@
     "bcrypt": "^3.0.7",
     "cheerio": "^1.0.0-rc.3",
     "config": "^3.2.5",
+    "cyrillic-to-translit-js": "^3.0.1",
     "express": "^4.17.1",
     "express-async-errors": "^3.1.1",
     "helmet": "^3.21.2",
